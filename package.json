@@ -10,14 +10,16 @@
     "@usedapp/core": "^1.0.8",
     "@walletconnect/web3-provider": "^1.7.7",
     "axios": "^0.27.2",
+    "dotenv": "^16.0.0",
     "ethers": "^5.5.0",
     "react": "^17.0.2",
+    "react-app-rewired": "^2.2.1",
     "react-dom": "^17.0.2",
+    "react-responsive-modal": "^6.2.0",
     "react-router": "^6.3.0",
     "react-router-dom": "^6.3.0",
-    "react-app-rewired": "^2.2.1",
     "react-scripts": "5.0.0",
-    "dotenv": "^16.0.0",
+    "react-toastify": "^9.1.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -47,17 +49,17 @@
   "devDependencies": {
     "assert": "^2.0.0",
     "autoprefixer": "^10.4.4",
+    "browserify-fs": "^1.0.0",
     "buffer": "^6.0.3",
     "crypto-browserify": "^3.12.0",
     "https-browserify": "^1.0.0",
     "os-browserify": "^0.3.0",
+    "path-browserify": "^1.0.1",
     "postcss": "^8.4.12",
     "process": "^0.11.10",
     "stream-browserify": "^3.0.0",
     "stream-http": "^3.2.0",
     "tailwindcss": "^3.0.23",
-    "url": "^0.11.0",
-    "path-browserify": "^1.0.1",
-    "browserify-fs": "^1.0.0"
+    "url": "^0.11.0"
   }
 }
