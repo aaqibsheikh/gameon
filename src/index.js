@@ -13,9 +13,9 @@ require('dotenv').config()
 const config = {
   pollingInterval: 5000,
   autoConnect: true,
-  readOnlyChainId: ChainId.BSC,
+  readOnlyChainId: ChainId.CronosTestnet,
   readOnlyUrls: {
-    [ChainId.BSC]: "https://sparkling-solitary-field.bsc.quiknode.pro/8282f393ed1ceb08bd41ab18a5e55ce5806fd088/"
+    [ChainId.CronosTestnet]: process.env.REACT_APP_CRONOS_TESTNET_RPC
   }
 };
 
