@@ -31,10 +31,10 @@ const ConnectWalletModal = (props) => {
 
   async function connectMetaMaskWalletOnClick() {
     try {
-      await activateBrowserWallet()
       if(chainId !== ChainId.Cronos) {
         await switchNetwork(ChainId.Cronos)
       }
+      await activateBrowserWallet()
       props.onHide()
     } catch (e) {
       // alert(JSON.stringify(e));
@@ -61,10 +61,10 @@ const ConnectWalletModal = (props) => {
         },
       })
       await provider.enable()
-      activate(provider)
       if(chainId !== ChainId.Cronos) {
         await switchNetwork(ChainId.Cronos)
       }
+      activate(provider)
       props.onHide()
 
       console.log('Trust Wallet Check', provider)
