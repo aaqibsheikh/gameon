@@ -16,6 +16,7 @@ function App() {
     account,
     activate,
     deactivate,
+    switchNetwork,
     chainId,
     error
   } = useEthers()
@@ -30,6 +31,7 @@ function App() {
 
   useEffect(() => {
     if (account && ChainId.Cronos !== chainId) {
+      switchNetwork(ChainId.Cronos)
       toast.error('Connect to Cronos Chain and refresh page', {
         position: 'bottom-right',
         autoClose: false,

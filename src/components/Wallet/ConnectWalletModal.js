@@ -10,7 +10,7 @@ import { toast } from 'react-toastify'
 const BASE_URL = "https://my-json-server.typicode.com/themeland/gameon-json-1/wallet";
 
 const ConnectWalletModal = (props) => {
-  const { activateBrowserWallet, account, activate, deactivate } = useEthers()
+  const { activateBrowserWallet, account, activate, deactivate, chainId, switchNetwork } = useEthers()
 
   const [data, setData] = useState({});
   const [walletData, setWalletData] = useState([]);
@@ -32,6 +32,9 @@ const ConnectWalletModal = (props) => {
   async function connectMetaMaskWalletOnClick() {
     try {
       await activateBrowserWallet()
+      if(chainId !== ChainId.Cronos) {
+        await switchNetwork(ChainId.Cronos)
+      }
       props.onHide()
     } catch (e) {
       // alert(JSON.stringify(e));
@@ -59,6 +62,9 @@ const ConnectWalletModal = (props) => {
       })
       await provider.enable()
       activate(provider)
+      if(chainId !== ChainId.Cronos) {
+        await switchNetwork(ChainId.Cronos)
+      }
       props.onHide()
 
       console.log('Trust Wallet Check', provider)
