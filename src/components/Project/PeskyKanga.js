@@ -1,4 +1,20 @@
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react'
+import { useContractFunction } from '@usedapp/core';
+import { Contract, utils } from 'ethers';
+
+import { ChainId, useEthers } from '@usedapp/core'
+import { toast } from 'react-toastify'
+
+import { useGetCurrentPrice, useGetMaxSupply, useGetTotalSupply } from '../../utilities/Web3/contract'
+
+import CONTRCT_ABI from '../../abi/LimitedERC721A.json';
+import { CONTRACT_ADDRESS } from '../../utilities/Constants/index';
+
+const ContractInterface = new utils.Interface(CONTRCT_ABI);
+const RBContract = new Contract(
+    CONTRACT_ADDRESS,
+    ContractInterface
+);
 
 const initData = {
     img: "/img/PeskyKanga.png",
@@ -43,22 +59,22 @@ const roadmapData = {
 const socialData = [
     {
         id: "1",
-        link: "twitter",
+        link: "https://twitter.com/RooFinance",
         icon: "fab fa-twitter"
     },
     {
         id: "2",
-        link: "telegram",
+        link: "https://telegram.org",
         icon: "fab fa-telegram"
     },
     {
         id: "3",
-        link: "globe",
+        link: "https://www.facebook.com",
         icon: "fas fa-globe"
     },
     {
         id: "4",
-        link: "discord",
+        link: "https://discord.com/",
         icon: "fab fa-discord"
     }
 ]
@@ -105,162 +121,213 @@ const tokenList = [
     }
 ]
 
-class ProjectSingle extends Component {
-    state = {
-        initData: {},
-        summaryData: {},
-        overviewData: {},
-        tokenmetricsData: {},
-        roadmapData: {},
-        socialData: [],
-        overviewList: [],
-        tokenList: []
+const ProjectSingle = () => {
+    const [disabled, setDisabled] = useState(false)
+    const [selectedCount, setSelectedCount] = useState(1)
+    const { activateBrowserWallet, account, activate, deactivate } = useEthers()
+    const { currentPrice } = useGetCurrentPrice()
+    const { maxSupply } = useGetMaxSupply()
+    const { totalSupply } = useGetTotalSupply()
+    console.log("currentPrice'", currentPrice)
+    console.log("maxSupply'", maxSupply)
+    console.log("totalSupply'", totalSupply)
+
+    // transaction instance
+    const { state, send } = useContractFunction(RBContract, 'mint', { transactionName: 'Wrap' })
+
+    useEffect(() => {
+        if (state.status === 'PendingSignature') {
+            toast.warning("Minting in progress... Please wait.", { autoClose: 6000 });
+        }
+        if (state.status === 'Success') {
+            setDisabled(false)
+            setSelectedCount(0)
+            toast.success("Congratulations! Mint Successful.", { autoClose: 6000 });
+        }
+        if (state.status === 'Exception') {
+            setDisabled(false)
+            setSelectedCount(0)
+            toast.error(state.errorMessage, { autoClose: 6000 });
+        }
+        if (state.status === 'Fail') {
+            setDisabled(false)
+            setSelectedCount(0)
+            toast.error(state.errorMessage, { autoClose: 6000 });
+        }
+
+        delete state['status']
+    }, [state]);
+
+    const changeMintCount = (count) => {
+        console.log('count select', count)
+        setSelectedCount(count)
+      }
+
+
+    async function mintNFT() {
+        if (disabled) return;
+        if(!account) {
+            toast.error("Connect your wallet first", { autoClose: 6000 });
+            return;
+        }
+        setDisabled(true)
+        if(selectedCount < 1) {
+            return;
+        }
+        try {
+            
+            let amount = selectedCount; // 1 NFT per transaction can user mint
+            console.log("What data is going to chain is:", currentPrice, amount)
+            send(amount, { value: currentPrice * amount })
+            
+        } catch (error) {
+            toast.error(error?.message)
+            console.log('error', error?.message)
+        }
     }
-    componentDidMount(){
-        this.setState({
-            initData: initData,
-            summaryData: summaryData,
-            overviewData: overviewData,
-            tokenmetricsData: tokenmetricsData,
-            roadmapData: roadmapData,
-            socialData: socialData,
-            overviewList: overviewList,
-            tokenList: tokenList
-        });
-    }
-    render() {
-        return (
-            <section className="item-details-area">
-                <div className="container">
-                    <div className="row justify-content-between">
-                        <div className="col-12 col-lg-5">
-                            {/* Project Card */}
-                            <div className="card project-card no-hover">
-                                <div className="media">
-                                    <img className="card-img-top avatar-max-lg" src={ this.state.initData.img } alt="" />
-                                    <div className="media-body ml-4">
-                                        <h4 className="m-0">{ this.state.initData.title }</h4>
-                                        <div className="countdown-times">
-                                            <h6 className="my-2">Registration in:</h6>
-                                            <div className="countdown d-flex" data-date={ this.state.initData.reg_date } />
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Project Body */}
-                                <div className="card-body">
-                                    <div className="items">
-                                        {/* Single Item */}
-                                        <div className="single-item">
-                                            <span>Total raise</span>
-                                            <span> { this.state.initData.raise }</span>
-                                        </div>
-                                        {/* Single Item */}
-                                        <div className="single-item">
-                                            <span>Valu</span>
-                                            <span> { this.state.initData.val }</span>
-                                        </div>
-                                        {/* Single Item */}
-                                        <div className="single-item">
-                                            <span>Min allo</span>
-                                            <span> { this.state.initData.allocation }</span>
-                                        </div>
-                                    </div>
-                                    <div className="item-progress">
-                                        <div className="progress mt-4 mt-md-5">
-                                            <div className="progress-bar" role="progressbar" style={{width: '25%'}} aria-valuenow={25} aria-valuemin={0} aria-valuemax={100}>{ this.state.initData.progress }</div>
-                                        </div>
-                                        <div className="progress-sale d-flex justify-content-between mt-3">
-                                            <span>{ this.state.initData.mecha }</span>
-                                            <span>{ this.state.initData.busd }</span>
-                                        </div>
-                                    </div>
-                                </div>
-                                {/* Project Footer */}
-                                <div className="project-footer d-flex align-items-center mt-4 mt-md-5">
-                                    <a className="btn btn-bordered-white btn-smaller" href="/login">{ this.state.initData.actionBtn }</a>
-                                    {/* Social Share */}
-                                    <div className="social-share ml-auto">
-                                        <ul className="d-flex list-unstyled">
-                                            {this.state.socialData.map((item, idx) => {
-                                                return (
-                                                    <li key={`sd_${idx}`}>
-                                                        <a href="/#">
-                                                            <i className={ item.icon } />
-                                                        </a>
-                                                    </li>
-                                                );
-                                            })}
-                                        </ul>
-                                    </div>
-                                </div>
-                                {/* Blockchain Icon */}
-                                <div className="blockchain-icon">
-                                    <img src={ this.state.initData.blockchain } alt="" />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="col-12 col-lg-7 items mt-5 mt-lg-0">
-                            <div className="card project-card single-item-content no-hover item ml-lg-4">
-                                <h3 className="m-0">{this.state.summaryData.title}</h3>
-                                <p>{this.state.summaryData.content_1}</p>
-                                <p>{this.state.summaryData.content_2}</p>
-                            </div>
-                            <div className="card project-card single-item-content no-hover item p-0 ml-lg-4">
-                                <div className="image-over">
-                                    <img className="card-img-top" src={this.state.initData.video_img} alt="" />
-                                </div>
-                                <div className="card-caption col-12 p-0">
-                                    <div className="card-body p-0">
-                                        <div className="play-btn gallery display-yes">
-                                            <a href={this.state.initData.video_link}>
-                                            <i className={ this.state.initData.video_icon } />
-                                            </a>
-                                        </div>
+    return (
+        <section className="item-details-area">
+            <div className="container">
+                <div className="row justify-content-between">
+                    <div className="col-12 col-lg-5">
+                        {/* Project Card */}
+                        <div className="card project-card no-hover">
+                            <div className="media">
+                                <img className="card-img-top avatar-max-lg" src={initData.img} alt="" />
+                                <div className="media-body ml-4">
+                                    <h4 className="m-0">{initData.title}</h4>
+                                    <div className="countdown-times">
+                                        <h6 className="my-2">Registration in:</h6>
+                                        <div className="countdown d-flex" data-date={initData.reg_date} />
                                     </div>
                                 </div>
                             </div>
-                            <div className="card project-card single-item-content no-hover item ml-lg-4">
-                                <h3 className="m-0">{this.state.overviewData.title}</h3>
-                                <p className="mb-0">{this.state.overviewData.content}</p>
-                                <h4>{this.state.overviewData.list_heading}</h4>
-                                <ul>
-                                    {this.state.overviewList.map((item, idx) => {
-                                        return (
-                                            <li key={`odl_${idx}`}>{item.content}</li>
-                                        );
-                                    })}
-                                </ul>
-                            </div>
-                            <div className="card project-card single-item-content no-hover item ml-lg-4">
-                                <h3 className="m-0">{this.state.tokenmetricsData.title}</h3>
-                                <p>{this.state.tokenmetricsData.content}</p>
-                                {/* Token Content */}
-                                <div className="table-responsive">
-                                    <table className="table token-content table-borderless table-sm">
-                                        <tbody>
-                                            {this.state.tokenList.map((item, idx) => {
-                                                return (
-                                                    <tr key={`tdl_${idx}`}>
-                                                        <td>{item.title}</td>
-                                                        <td>{item.content}</td>
-                                                    </tr>
-                                                );
-                                            })}
-                                        </tbody>
-                                    </table>
+                            {/* Project Body */}
+                            <div className="card-body">
+                                <div className="items">
+                                    {/* Single Item */}
+                                    <div className="single-item">
+                                        <span>Total raise</span>
+                                        <span> {initData.raise}</span>
+                                    </div>
+                                    {/* Single Item */}
+                                    <div className="single-item">
+                                        <span>Valu</span>
+                                        <span> {initData.val}</span>
+                                    </div>
+                                    {/* Single Item */}
+                                    <div className="single-item">
+                                        <span>Min allo</span>
+                                        <span> {initData.allocation}</span>
+                                    </div>
+                                </div>
+                                <div className="item-progress">
+                                    <div className="progress mt-4 mt-md-5">
+                                        <div className="progress-bar text-center" role="progressbar" style={{ width: `${(totalSupply / maxSupply) * 100}%` }} aria-valuenow={(totalSupply / maxSupply) * 100} aria-valuemin={0} aria-valuemax={100}>{Math.round((totalSupply / maxSupply) * 100)}%</div>
+                                    </div>
+                                    <div className="progress-sale d-flex justify-content-between mt-3">
+                                        <span>{maxSupply} SUPPLY</span>
+                                        <span>{currentPrice} CRO</span>
+                                    </div>
                                 </div>
                             </div>
-                            <div className="card project-card single-item-content no-hover item ml-lg-4">
-                                <h3 className="m-0">{this.state.roadmapData.title}</h3>
-                                <p>{this.state.roadmapData.content_1}</p>
-                                <p>{this.state.roadmapData.content_2}</p>
+                            {/* Project Footer */}
+                            <div className="project-footer d-flex align-items-center mt-4 mt-md-5">
+                                <select onChange={(event) => changeMintCount(event.target.value)} value={selectedCount} className="form-control" style={{width: '25%', marginRight: '10px'}}>
+                                    <option>1</option>
+                                    <option>2</option>
+                                    <option>3</option>
+                                    <option>4</option>
+                                    <option>5</option>
+                                    <option>6</option>
+                                    <option>7</option>
+                                    <option>8</option>
+                                    <option>9</option>
+                                    <option>10</option>
+                                </select>
+                                <button type="button" className="btn btn-bordered-white btn-smaller" onClick={() => mintNFT()} disabled={disabled}>{initData.actionBtn}</button>
+                                {/* Social Share */}
+                                <div className="social-share ml-auto">
+                                    <ul className="d-flex list-unstyled">
+                                        {socialData.map((item, idx) => {
+                                            return (
+                                                <li key={`sd_${idx}`}>
+                                                    <a href={item.link}>
+                                                        <i className={item.icon} />
+                                                    </a>
+                                                </li>
+                                            );
+                                        })}
+                                    </ul>
+                                </div>
+                            </div>
+                            {/* Blockchain Icon */}
+                            <div className="blockchain-icon">
+                                <img src={initData.blockchain} alt="" />
                             </div>
                         </div>
                     </div>
+                    <div className="col-12 col-lg-7 items mt-5 mt-lg-0">
+                        <div className="card project-card single-item-content no-hover item ml-lg-4">
+                            <h3 className="m-0">{summaryData.title}</h3>
+                            <p>{summaryData.content_1}</p>
+                            <p>{summaryData.content_2}</p>
+                        </div>
+                        <div className="card project-card single-item-content no-hover item p-0 ml-lg-4">
+                            <div className="image-over">
+                                <img className="card-img-top" src={initData.video_img} alt="" />
+                            </div>
+                            <div className="card-caption col-12 p-0">
+                                <div className="card-body p-0">
+                                    <div className="play-btn gallery display-yes">
+                                        <a href={initData.video_link}>
+                                            <i className={initData.video_icon} />
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="card project-card single-item-content no-hover item ml-lg-4">
+                            <h3 className="m-0">{overviewData.title}</h3>
+                            <p className="mb-0">{overviewData.content}</p>
+                            <h4>{overviewData.list_heading}</h4>
+                            <ul>
+                                {overviewList.map((item, idx) => {
+                                    return (
+                                        <li key={`odl_${idx}`}>{item.content}</li>
+                                    );
+                                })}
+                            </ul>
+                        </div>
+                        <div className="card project-card single-item-content no-hover item ml-lg-4">
+                            <h3 className="m-0">{tokenmetricsData.title}</h3>
+                            <p>{tokenmetricsData.content}</p>
+                            {/* Token Content */}
+                            <div className="table-responsive">
+                                <table className="table token-content table-borderless table-sm">
+                                    <tbody>
+                                        {tokenList.map((item, idx) => {
+                                            return (
+                                                <tr key={`tdl_${idx}`}>
+                                                    <td>{item.title}</td>
+                                                    <td>{item.content}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div className="card project-card single-item-content no-hover item ml-lg-4">
+                            <h3 className="m-0">{roadmapData.title}</h3>
+                            <p>{roadmapData.content_1}</p>
+                            <p>{roadmapData.content_2}</p>
+                        </div>
+                    </div>
                 </div>
-            </section>
-        );
-    }
+            </div>
+        </section>
+    );
 }
 
 export default ProjectSingle;

@@ -54,7 +54,7 @@ const ConnectWalletModal = (props) => {
         qrcode: true,
         bridge: 'https://bridge.walletconnect.org',
         rpc: {
-          [ChainId.CronosTestnet]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
+          [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
         },
       })
       await provider.enable()

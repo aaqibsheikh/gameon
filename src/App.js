@@ -29,8 +29,8 @@ function App() {
   });
 
   useEffect(() => {
-    if (ChainId.CronosTestnet !== chainId) {
-      toast.error('Connect to Cronos Testnet Chain and refresh page', {
+    if (account && ChainId.Cronos !== chainId) {
+      toast.error('Connect to Cronos Chain and refresh page', {
         position: 'bottom-right',
         autoClose: false,
         hideProgressBar: false,
@@ -50,7 +50,7 @@ function App() {
           qrcode: true,
           bridge: 'https://bridge.walletconnect.org',
           rpc: {
-            [ChainId.CronosTestnet]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
+            [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
           },
         })
         await provider.enable()

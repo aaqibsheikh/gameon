@@ -13,9 +13,9 @@ require('dotenv').config()
 const config = {
   pollingInterval: 5000,
   autoConnect: true,
-  readOnlyChainId: ChainId.CronosTestnet,
+  readOnlyChainId: ChainId.Cronos,
   readOnlyUrls: {
-    [ChainId.CronosTestnet]: process.env.REACT_APP_CRONOS_TESTNET_RPC
+    [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC
   }
 };
 
