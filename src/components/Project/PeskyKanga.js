@@ -141,17 +141,17 @@ const ProjectSingle = () => {
         }
         if (state.status === 'Success') {
             setDisabled(false)
-            setSelectedCount(0)
+            setSelectedCount(1)
             toast.success("Congratulations! Mint Successful.", { autoClose: 6000 });
         }
         if (state.status === 'Exception') {
             setDisabled(false)
-            setSelectedCount(0)
+            setSelectedCount(1)
             toast.error(state.errorMessage, { autoClose: 6000 });
         }
         if (state.status === 'Fail') {
             setDisabled(false)
-            setSelectedCount(0)
+            setSelectedCount(1)
             toast.error(state.errorMessage, { autoClose: 6000 });
         }
 
@@ -170,21 +170,26 @@ const ProjectSingle = () => {
             toast.error("Connect your wallet first", { autoClose: 6000 });
             return;
         }
-        setDisabled(true)
-        if(selectedCount < 1) {
-            return;
-        }
         try {
             
-            let amount = selectedCount; // 1 NFT per transaction can user mint
-            console.log("What data is going to chain is:", currentPrice, amount)
-            send(amount, { value: currentPrice * amount })
+            let amount = parseInt(selectedCount); // 1 NFT per transaction can user mint
+
+            let totalCost = currentPrice * selectedCount;
+            totalCost = floatToStr(totalCost);
+            totalCost = totalCost.substring(0, 3)
+            console.log(`totalCost ${utils.parseEther(totalCost)} || amount ${amount}`)
+            send(amount, { value: utils.parseEther(totalCost) })
             
         } catch (error) {
             toast.error(error?.message)
             console.log('error', error?.message)
+            setDisabled(false)
+            setSelectedCount(1)
         }
     }
+    function floatToStr(num) {
+        return num.toString().indexOf('.') === -1 ? num.toFixed(1) : num.toString();
+      }
     return (
         <section className="item-details-area">
             <div className="container">

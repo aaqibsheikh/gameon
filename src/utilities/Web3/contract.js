@@ -26,7 +26,7 @@ export function useGetCurrentPrice()  {
   useEffect(() => {
     setPending(true);
     if (value) {
-      setCurrentPrice(value?.[0].toNumber());
+      setCurrentPrice(utils.formatEther(value?.[0]));
       setPending(false);
     }
     if (error) {
