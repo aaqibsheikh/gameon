@@ -64,10 +64,10 @@ const ConnectWalletModal = (props) => {
         },
       })
       await provider.enable()
+      activate(provider)
       if(chainId !== ChainId.Cronos) {
         await switchNetwork(ChainId.Cronos)
       }
-      activate(provider)
       props.onHide()
 
       console.log('Trust Wallet Check', provider)
