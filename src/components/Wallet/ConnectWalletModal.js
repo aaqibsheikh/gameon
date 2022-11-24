@@ -31,14 +31,13 @@ const ConnectWalletModal = (props) => {
 
   async function connectMetaMaskWalletOnClick() {
     try {
-      alert("chain Id", chainId)
-      await activate();
+      await activateBrowserWallet()
+      alert("account", account)
       alert("chain Id", chainId)
       if(chainId !== ChainId.Cronos) {
         alert("chainId !== ChainId.Cronos", chainId)
         await switchNetwork(ChainId.Cronos)
       }
-      // await activateBrowserWallet()
       props.onHide()
     } catch (e) {
       // alert(JSON.stringify(e));

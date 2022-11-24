@@ -63,7 +63,7 @@ function App() {
         await provider.enable()
         await switchNetwork(ChainId.Cronos)
         await activate(provider)
-        await activateBrowserWallet()
+        // await activateBrowserWallet()
       }
     }
     
