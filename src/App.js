@@ -29,23 +29,28 @@ function App() {
     }
   });
 
+  
   useEffect(() => {
-    if (account && ChainId.Cronos !== chainId) {
-      switchNetwork(ChainId.Cronos)
-      toast.error('Connect to Cronos Chain and refresh page', {
-        position: 'bottom-right',
-        autoClose: false,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-        progress: undefined,
-      })
+    const checkNetwork = async () => {
+      try {
+        
+        if (account && ChainId.Cronos !== chainId) {
+          await switchNetwork(ChainId.Cronos)
+        }
+      } catch (error) {
+        toast.error(error, {
+          position: 'bottom-right',
+          autoClose: false,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        })
+        
+      }
+      
     }
-    console.log(
-      'process.env.REACT_APP_CRONOS_TESTNET_RPC',
-      process.env.REACT_APP_CRONOS_TESTNET_RPC,
-    )
     const checkWalletConnectSession = async () => {
       if (window.localStorage.walletconnect) {
         const provider = new WalletConnectProvider({
@@ -56,13 +61,14 @@ function App() {
           },
         })
         await provider.enable()
-        switchNetwork(ChainId.Cronos)
-        activate(provider)
-        activateBrowserWallet()
+        await switchNetwork(ChainId.Cronos)
+        await activate(provider)
+        await activateBrowserWallet()
       }
     }
-
-    // checkWalletConnectSession()
+    
+    checkNetwork();
+    checkWalletConnectSession()
   }, [chainId])
   return (
     <div>
