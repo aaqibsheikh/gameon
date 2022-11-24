@@ -1072,7 +1072,14 @@ aside {
   transition: all 0.3s ease 0s;
   z-index: -2;
 }
-
+.custom-border {
+  border: 2px solid #fff;
+  padding: 6px 12px;
+  font-size: 16px;
+  color: #FFF;
+  cursor: pointer;
+  border-radius: 100px;
+}
 .btn.btn-bordered:after {
   position: absolute;
   content: "";

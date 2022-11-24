@@ -106,16 +106,17 @@ const Header = () => {
                         <ul className="navbar-nav action">
                             {!account && (
                                 <li className="nav-item ml-2" onClick={() => setShowModal(true)}>
-                                    <div className="btn ml-lg-auto btn-bordered-white"><i className="icon-wallet mr-md-2" />Wallet Connect</div>
+                                    <p className="custom-border">Wallet Connect</p>
+                                    {/* <div className="btn ml-lg-auto btn-bordered-white"><i className="icon-wallet mr-md-2" />Wallet Connect</div> */}
                                 </li>
                             )}
                             {
                                 account && (
                                     <li className="nav-item ml-2" onClick={() => disconnectWallet()}>
-                                        <div className="btn ml-lg-auto btn-bordered-white">
-                                            <i className="icon-wallet mr-md-2" />
-                                            Disconnect
-                                        </div>
+                                            <p className="custom-border">Disconnect</p>
+                                        {/* <div className="btn ml-lg-auto btn-bordered-white">
+                                            <i className="icon-logout mr-md-2" />
+                                        </div> */}
                                     </li>
 
                                 )
