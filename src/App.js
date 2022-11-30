@@ -33,7 +33,7 @@ function App() {
   useEffect(() => {
     const checkNetwork = async () => {
       try {
-        
+        console.log('checkNetwork is chain equal', ChainId.Cronos === chainId)
         if (account && ChainId.Cronos !== chainId) {
           await switchNetwork(ChainId.Cronos)
         }
@@ -68,7 +68,7 @@ function App() {
     }
     
     checkNetwork();
-    checkWalletConnectSession()
+    // checkWalletConnectSession()
   }, [chainId])
   return (
     <div>

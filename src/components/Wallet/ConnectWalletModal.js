@@ -20,24 +20,23 @@ const ConnectWalletModal = (props) => {
       .then(res => {
         setData(res.data)
         setWalletData(res.data.walletData)
-        // this.setState({
-        //     data: res.data,
-        //     walletData: res.data.walletData
-        // })
-        // console.log(data)
-      })
+       })
       .catch(err => console.log(err))
-  }, [account])
+  }, [])
+
+  async function changeNetwork() {
+    await switchNetwork(ChainId.Cronos)
+  }
+
+  useEffect(() => {
+    if(chainId && chainId != ChainId.Cronos) {
+      changeNetwork();
+    }
+  }, [chainId])
 
   async function connectMetaMaskWalletOnClick() {
     try {
       await activateBrowserWallet()
-      alert("account", account)
-      alert("chain Id", chainId)
-      if(chainId !== ChainId.Cronos) {
-        alert("chainId !== ChainId.Cronos", chainId)
-        await switchNetwork(ChainId.Cronos)
-      }
       props.onHide()
     } catch (e) {
       // alert(JSON.stringify(e));
@@ -58,16 +57,17 @@ const ConnectWalletModal = (props) => {
     try {
       const provider = new WalletConnectProvider({
         qrcode: true,
+				pollingInterval: 15000,
         bridge: 'https://bridge.walletconnect.org',
         rpc: {
           [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
         },
       })
       await provider.enable()
-      activate(provider)
-      if(chainId !== ChainId.Cronos) {
-        await switchNetwork(ChainId.Cronos)
-      }
+      await activate(provider)
+      // if(chainId !== ChainId.Cronos) {
+      //   await switchNetwork(ChainId.Cronos)
+      // }
       props.onHide()
 
       console.log('Trust Wallet Check', provider)

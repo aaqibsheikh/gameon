@@ -78,13 +78,6 @@ const Header = () => {
                             <li className="nav-item">
                                 <a href="/contact" className="nav-link">Contact</a>
                             </li>
-                            {account && (
-                                <li className="nav-item">
-                                    <p className="nav-link text-white">
-                                        {account.substring(0, 8)}...{account.substring(36, 42)}
-                                    </p>
-                                </li>
-                            )}
                         </ul>
                         {/* Navbar Icons */}
                         <ul className="navbar-nav icons">
@@ -113,7 +106,7 @@ const Header = () => {
                             {
                                 account && (
                                     <li className="nav-item ml-2" onClick={() => disconnectWallet()}>
-                                            <p className="custom-border">Disconnect</p>
+                                            <p className="custom-border">{account.substring(0, 5)}...{account.substring(39, 42)} | Disconnect</p>
                                         {/* <div className="btn ml-lg-auto btn-bordered-white">
                                             <i className="icon-logout mr-md-2" />
                                         </div> */}
