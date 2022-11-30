@@ -7,29 +7,16 @@ import { ChainId, useEthers } from '@usedapp/core'
 import WalletConnectProvider from '@walletconnect/web3-provider'
 
 import { toast } from 'react-toastify'
-const BASE_URL = "https://my-json-server.typicode.com/themeland/gameon-json-1/wallet";
 
 const ConnectWalletModal = (props) => {
-  const { activateBrowserWallet, account, activate, deactivate, chainId, switchNetwork } = useEthers()
-
-  const [data, setData] = useState({});
-  const [walletData, setWalletData] = useState([]);
-
-  useEffect(() => {
-    axios.get(`${BASE_URL}`)
-      .then(res => {
-        setData(res.data)
-        setWalletData(res.data.walletData)
-       })
-      .catch(err => console.log(err))
-  }, [])
+  const { activateBrowserWallet, active, account, activate, deactivate, chainId, switchNetwork } = useEthers()
 
   async function changeNetwork() {
     await switchNetwork(ChainId.Cronos)
   }
 
   useEffect(() => {
-    if(chainId && chainId != ChainId.Cronos) {
+    if(active && chainId != ChainId.Cronos) {
       changeNetwork();
     }
   }, [chainId])
@@ -65,11 +52,8 @@ const ConnectWalletModal = (props) => {
       })
       await provider.enable()
       await activate(provider)
-      // if(chainId !== ChainId.Cronos) {
-      //   await switchNetwork(ChainId.Cronos)
-      // }
-      props.onHide()
 
+      props.onHide()
       console.log('Trust Wallet Check', provider)
     } catch (error) {
       console.error(error)
@@ -90,18 +74,17 @@ const ConnectWalletModal = (props) => {
       <Modal open={props.open} onClose={props.onHide} center>
         <section className="wallet-connect-area">
           <div className="container">
-            <div className="row justify-content-center">
+            {/* <div className="row justify-content-center">
               <div className="col-12 col-md-8 col-lg-7">
                 <div className="intro text-center">
                   <div className="intro-content">
-                    <span className="intro-text">{data.sub_heading}</span>
+                    <span className="intro-text">Wallet Connect</span>
                     <h3 className="mt-3 mb-0">{data.heading}</h3>
                     <p>{data.content}</p>
-                    <p>{account}</p>
                   </div>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="row justify-content-center items">
               <div onClick={() => connectMetaMaskWalletOnClick()} className="col-12 col-md-6 col-lg-4 item">
                 <div className="card single-wallet">

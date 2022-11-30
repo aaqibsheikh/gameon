@@ -4,7 +4,7 @@ import { ChainId, useEthers } from '@usedapp/core'
 import ConnectWalletModal from '../Wallet/ConnectWalletModal'
 const Header = () => {
     const [showModal, setShowModal] = useState(false)
-    const { activateBrowserWallet, account, activate, deactivate } = useEthers()
+    const { account, activate, deactivate } = useEthers()
     const disconnectWallet = () => {
         deactivate()
         localStorage.removeItem('walletconnect')
