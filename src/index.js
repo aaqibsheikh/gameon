@@ -11,7 +11,7 @@ import reportWebVitals from './reportWebVitals';
 require('dotenv').config()
 
 const config = {
-  pollingInterval: 15000,
+  pollingInterval: 5000,
   autoConnect: true,
   readOnlyChainId: ChainId.Cronos,
   readOnlyUrls: {

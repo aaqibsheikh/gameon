@@ -40,11 +40,11 @@ const ConnectWalletModal = (props) => {
     }
   }
 
-  const connectToWalletConnect = async () => {
+  async function connectToWalletConnect() {
     try {
       const provider = new WalletConnectProvider({
         qrcode: true,
-				pollingInterval: 15000,
+				pollingInterval: 5000,
         bridge: 'https://bridge.walletconnect.org',
         rpc: {
           [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
@@ -86,7 +86,7 @@ const ConnectWalletModal = (props) => {
               </div>
             </div> */}
             <div className="row justify-content-center items">
-              <div onClick={() => connectMetaMaskWalletOnClick()} className="col-12 col-md-6 col-lg-4 item">
+              <div onClick={connectMetaMaskWalletOnClick} className="col-12 col-md-6 col-lg-4 item">
                 <div className="card single-wallet">
                   <div className="d-block text-center cursor-pointer" >
                     <img className="avatar-lg" src="/img/metamask.png" alt="" />
@@ -95,7 +95,7 @@ const ConnectWalletModal = (props) => {
                   </div>
                 </div>
               </div>
-              <div onClick={() => connectToWalletConnect()} className="col-12 col-md-6 col-lg-4 item">
+              <div onClick={connectToWalletConnect} className="col-12 col-md-6 col-lg-4 item">
                 <div className="card single-wallet">
                   <div className="d-block text-center cursor-pointer" >
                     <img className="avatar-lg" src="/img/walletconnect.png" alt="" />
