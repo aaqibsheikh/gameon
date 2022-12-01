@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios';
+import { ethers } from "ethers";
 
 import { Modal } from 'react-responsive-modal';
 
@@ -11,23 +12,27 @@ import { toast } from 'react-toastify'
 const ConnectWalletModal = (props) => {
   const { activateBrowserWallet, active, account, activate, deactivate, chainId, switchNetwork } = useEthers()
 
-  async function changeNetwork() {
-    await switchNetwork(ChainId.Cronos)
-  }
+  // async function changeNetwork() {
+  //   await switchNetwork(ChainId.Cronos)
+  // }
 
-  useEffect(() => {
-    if(active && chainId != ChainId.Cronos) {
-      changeNetwork();
-    }
-  }, [chainId])
+  const reloadApp = () => {
+    window.location.reload();
+  };
 
-  async function connectMetaMaskWalletOnClick() {
+  // useEffect(() => {
+  //   if (active && chainId != ChainId.Cronos) {
+  //     changeNetwork();
+  //   }
+  // }, [chainId])
+
+  const connectMetaMaskWalletOnClick = async () => {
     try {
-      await activateBrowserWallet()
+      localStorage.clear();
+      activateBrowserWallet()
       props.onHide()
     } catch (e) {
-      // alert(JSON.stringify(e));
-      toast.error('Please install MetaMask', {
+      toast.error(e.message, {
         position: 'bottom-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -36,25 +41,34 @@ const ConnectWalletModal = (props) => {
         draggable: true,
         progress: undefined,
       })
-      console.log(e)
+      console.log('errorrrr', e)
     }
   }
 
   async function connectToWalletConnect() {
     try {
+      localStorage.clear();
       const provider = new WalletConnectProvider({
         qrcode: true,
-				pollingInterval: 5000,
         bridge: 'https://bridge.walletconnect.org',
         rpc: {
-          [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
+          [ChainId.Cronos]: process.env.REACT_APP_CRONOS_RPC,
         },
+        chainId: ChainId.Cronos
       })
       await provider.enable()
+      if (!(provider.chainId === 25)) {
+        await switchNetwork(ChainId.Cronos)
+      }
       await activate(provider)
 
+      // // Subscribe to events that reload the app
+      // provider.on("accountsChanged", reloadApp);
+      // provider.on("chainChanged", reloadApp);
+      // provider.on("disconnect", reloadApp);
+
+
       props.onHide()
-      console.log('Trust Wallet Check', provider)
     } catch (error) {
       console.error(error)
       toast.error(error.message, {
@@ -86,7 +100,7 @@ const ConnectWalletModal = (props) => {
               </div>
             </div> */}
             <div className="row justify-content-center items">
-              <div onClick={connectMetaMaskWalletOnClick} className="col-12 col-md-6 col-lg-4 item">
+              <div onClick={() => connectMetaMaskWalletOnClick()} className="col-12 col-md-6 col-lg-4 item d-none d-lg-block d-md-none">
                 <div className="card single-wallet">
                   <div className="d-block text-center cursor-pointer" >
                     <img className="avatar-lg" src="/img/metamask.png" alt="" />
@@ -95,7 +109,7 @@ const ConnectWalletModal = (props) => {
                   </div>
                 </div>
               </div>
-              <div onClick={connectToWalletConnect} className="col-12 col-md-6 col-lg-4 item">
+              <div onClick={() => connectToWalletConnect()} className="col-12 col-md-6 col-lg-4 item">
                 <div className="card single-wallet">
                   <div className="d-block text-center cursor-pointer" >
                     <img className="avatar-lg" src="/img/walletconnect.png" alt="" />

@@ -15,7 +15,7 @@ const config = {
   autoConnect: true,
   readOnlyChainId: ChainId.Cronos,
   readOnlyUrls: {
-    [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC
+    [ChainId.Cronos]: process.env.REACT_APP_CRONOS_RPC
   }
 };
 

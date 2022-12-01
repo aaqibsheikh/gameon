@@ -14,6 +14,7 @@ function App() {
   const {
     activateBrowserWallet,
     account,
+    active,
     activate,
     deactivate,
     switchNetwork,
@@ -31,44 +32,38 @@ function App() {
 
   
   useEffect(() => {
-    const checkNetwork = async () => {
-      try {
-        console.log('checkNetwork is chain equal', ChainId.Cronos === chainId)
-        if (account && ChainId.Cronos !== chainId) {
-          await switchNetwork(ChainId.Cronos)
-        }
-      } catch (error) {
-        toast.error(error, {
-          position: 'bottom-right',
-          autoClose: false,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        })
-        
-      }
-      
-    }
+   
     const checkWalletConnectSession = async () => {
       if (window.localStorage.walletconnect) {
         const provider = new WalletConnectProvider({
           qrcode: true,
           bridge: 'https://bridge.walletconnect.org',
           rpc: {
-            [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
+            [ChainId.Cronos]: process.env.REACT_APP_CRONOS_RPC,
           },
+          chainId: ChainId.Cronos
         })
         await provider.enable()
-        activate(provider)
-        await switchNetwork(ChainId.Cronos)
-        // await activateBrowserWallet()
+        await activate(provider)
       }
     }
     
-    checkNetwork();
-    // checkWalletConnectSession()
+    checkWalletConnectSession()
+    if (active && ChainId.Cronos !== chainId) {
+      toast.error('Connect to Cronos Chain and refresh page', {
+        position: 'bottom-right',
+        autoClose: false,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      })
+    }
+    console.log(
+      'process.env.REACT_APP_CRONOS_RPC',
+      process.env.REACT_APP_CRONOS_RPC,
+    )
   }, [chainId])
   return (
     <div>

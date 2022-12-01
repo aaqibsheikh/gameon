@@ -32,11 +32,11 @@ const Wallet = () => {
               qrcode: true,
               bridge: 'https://bridge.walletconnect.org',
               rpc: {
-                [ChainId.Cronos]: process.env.REACT_APP_CRONOS_TESTNET_RPC,
+                [ChainId.Cronos]: process.env.REACT_APP_CRONOS_RPC,
               },
             })
             await provider.enable()
-            activate(provider)
+            await activate(provider)
       
             console.log('Trust Wallet Check', provider)
           } catch (error) {
